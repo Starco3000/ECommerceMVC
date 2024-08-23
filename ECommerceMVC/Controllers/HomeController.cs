@@ -1,5 +1,6 @@
 using ECommerceMVC.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Diagnostics;
 
 namespace ECommerceMVC.Controllers
@@ -14,6 +15,12 @@ namespace ECommerceMVC.Controllers
         }
 
         public IActionResult Index()
+        {
+            return View();
+        }
+
+        [Route("/404")]
+        public IActionResult PageNotFound()
         {
             return View();
         }

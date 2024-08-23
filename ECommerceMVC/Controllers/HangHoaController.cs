@@ -1,6 +1,7 @@
 ﻿using ECommerceMVC.Data;
 using ECommerceMVC.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ECommerceMVC.Controllers
 {
@@ -25,8 +26,8 @@ namespace ECommerceMVC.Controllers
                 MaHH = p.MaHh,
                 TenHH = p.TenHh,
                 DonGia = p.DonGia ?? 0,
-                Hinh = p.Hinh ?? "",
-                MotaNgan = p.MoTaDonVi ?? "",
+                Hinh = p.Hinh ?? string.Empty,
+                MotaNgan = p.MoTaDonVi ?? string.Empty,
                 TenLoai = p.MaLoaiNavigation.TenLoai
             });
             return View(result);
@@ -46,10 +47,37 @@ namespace ECommerceMVC.Controllers
                 MaHH = p.MaHh,
                 TenHH = p.TenHh,
                 DonGia = p.DonGia ?? 0,
-                Hinh = p.Hinh ?? "",
-                MotaNgan = p.MoTaDonVi ?? "",
+                Hinh = p.Hinh ?? string.Empty,
+                MotaNgan = p.MoTaDonVi ?? string.Empty,
                 TenLoai = p.MaLoaiNavigation.TenLoai
             });
+            return View(result);
+        }
+
+
+        public IActionResult Detail(int id)
+        {
+            var data = db.HangHoas
+                .Include(p => p.MaLoaiNavigation)
+                .SingleOrDefault(p => p.MaHh == id);
+            if (data == null)
+            {
+                TempData["Message"] = $"Không tìm thấy sản phẩm có mã {id}";
+                return Redirect("/404");
+            }
+
+            var result = new ChiTietHangHoaVM
+            {
+                MaHH = data.MaHh,
+                TenHH = data.TenHh,
+                DonGia = data.DonGia ?? 0,
+                ChiTiet = data.MoTa ?? string.Empty,
+                Hinh = data.Hinh ?? string.Empty,
+                MotaNgan = data.MoTaDonVi ?? string.Empty,
+                TenLoai = data.MaLoaiNavigation.TenLoai,
+                SoLuongTon = 10, //tinh sau
+                DiemDanhGia = 5 // Check sau
+            };
             return View(result);
         }
     }
